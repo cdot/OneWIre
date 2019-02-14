@@ -27,21 +27,6 @@ class OneWireDevice {
     }
     
     /**
-     * Subclasses are expected to override this for the devices they support
-     * @return if this device supports the given device getFamily
-     */
-    public static boolean supportsDevice(byte family) {
-        return false;
-    }
-    
-    /**
-     * @return if this device supports the device with the given serial number
-     */
-    public static boolean supportsDevice(long serno) {
-        return supportsDevice((byte)((serno >> 56) & 0xFF));
-    }
-    
-    /**
      * @return the byte from the serial number that indicates the device getFamily
      */
     public byte getFamily() {

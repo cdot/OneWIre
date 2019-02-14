@@ -57,6 +57,10 @@ public class OneWireThermometer extends OneWireDevice {
         return false;
     }
     
+    public static boolean supportsDevice(long serno) {
+        return supportsDevice((byte)((serno >> 56) & 0xFF));
+    }
+    
     @Override
     public String toString() {
         return String.format("%X: %g (%d) %d<T>%d",

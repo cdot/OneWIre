@@ -13,28 +13,37 @@ import jssc.SerialPortList;
  */
 public class DigiTemp {
     public static void main(String[] args) {
-         String[] portNames = SerialPortList.getPortNames();
+        String[] portNames = SerialPortList.getPortNames();
+        System.out.println("Scanning serial ports");
         for (String portName: portNames){
             System.out.println("Found serial port " + portName);
+
+            // Construct a driver for this port 
+            final OneWireSerialDriver driver = new OneWireJSSCDriver(portName, new OneWireSerialDriver.Logger() {
+                @Override
+                public void log(String s) {
+                    System.out.println(s);
+                }
+            });
+            
+            // Scan the 1-wire bus for supported devices
+            OneWireSearch scanner = new OneWireSearch(driver);
+
+            scanner.scan(new OneWireSearch.Device() {
+                @Override
+                public OneWireError device(long serno) {
+                    System.out.println(String.format("Found 1-wire device %X", serno));
+                    if (!OneWireThermometer.supportsDevice(serno)) {
+                        System.out.println("\t- not supported");
+                        return OneWireError.NO_ERROR_SET;
+                    }
+                    OneWireThermometer owt = new OneWireThermometer(serno, driver);
+                    owt.update();
+                    System.out.println(owt);
+                    return OneWireError.NO_ERROR_SET;
+                }
+            });
         }
-        final OneWireSerialDriver driver = new OneWireJSSCDriver(portNames[0], new OneWireSerialDriver.Logger() {
-            @Override
-            public void log(String s) {
-                System.out.println(s);
-            }
-        });
-        OneWireSearch scanner = new OneWireSearch(driver);
-    
-        class MyHandler implements OneWireSearch.Device {
-            @Override
-            public OneWireError device(long serno) {
-                OneWireThermometer owt = new OneWireThermometer(serno, driver);
-                owt.update();
-                System.out.println(serno + ": " + owt);
-                return OneWireError.NO_ERROR_SET;
-            }
-        }
-        scanner.scan(new MyHandler());
     }
 }
 
