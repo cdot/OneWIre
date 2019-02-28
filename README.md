@@ -10,3 +10,5 @@ To achieve this the port was done first on Linux with a simple driver interface 
 
 Only thermometer devices directly attached to the main 1-wire bus (i.e. not connected through couplers) are supported.
 Other sensors, and couplers, should be fairly easy to add by following the patterns used by digitemp.
+
+Development on Linux was done using Netbeans, and the jar re-used within Android Studio for the android port (see my FingerInTheAir project for this part)
